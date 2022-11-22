@@ -289,13 +289,15 @@ namespace OKEGui
             if (json.InputFiles != null)
             {
                 inputFile.Clear();
+                ObservableCollection<string> notFoundFile = new ObservableCollection<string>();
+                ObservableCollection<string> dupFile = new ObservableCollection<string>();
                 foreach (string file in json.InputFiles)
                 {
                     FileInfo input = new FileInfo(PathUtils.GetFullPath(file, jsonDir.FullName));
                     if (inputFile.Contains(input.FullName))
                     {
                         MessageBox.Show("指定的文件(" + input.FullName + ")重复了，请总监复查下输入文件列表？", "输入文件有重复", MessageBoxButton.OK, MessageBoxImage.Error);
-                        return 0;
+                        dupFile.Add(input.FullName);
                     }
                     if (input.Exists)
                     {
@@ -304,10 +306,10 @@ namespace OKEGui
                     else
                     {
                         MessageBox.Show("指定的文件(" + input.FullName + ")不存在啊，跟总监确认下json应该放哪？", "找不到输入文件啊", MessageBoxButton.OK, MessageBoxImage.Error);
-                        return 0;
+                        notFoundFile.Add(input.FullName);
                     }
                 }
-                fileCount = json.InputFiles.Count;
+                fileCount = json.InputFiles.Count - notFoundFile.Count - dupFile.Count;
             }
             return fileCount;
         }
